@@ -24,17 +24,19 @@ func main() {
 func MandelbrotImage(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
-	var img image.Image
-	img = mandelbrot.Image()
+	img := mandelbrot.Image()
 	writeImage(w, &img)
-	log.Print("writing image took ", time.Since(start))
+	log.Print("Processing request took ", time.Since(start))
 }
 
 // writeImage encodes an image 'img' in jpeg format and writes it into ResponseWriter.
 func writeImage(w http.ResponseWriter, img *image.Image) {
+	start := time.Now()
 
 	buffer := new(bytes.Buffer)
-	if err := jpeg.Encode(buffer, *img, nil); err != nil {
+	options := new(jpeg.Options)
+	options.Quality = 100
+	if err := jpeg.Encode(buffer, *img, options); err != nil {
 		log.Println("unable to encode image.")
 	}
 
@@ -43,4 +45,5 @@ func writeImage(w http.ResponseWriter, img *image.Image) {
 	if _, err := w.Write(buffer.Bytes()); err != nil {
 		log.Println("unable to write image.")
 	}
+	log.Print("Encoding image took ", time.Since(start))
 }
