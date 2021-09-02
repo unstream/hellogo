@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"math/cmplx"
 	"time"
 )
 
@@ -97,6 +98,18 @@ func IterationFunction(z, c complex128, iterations int) IterationResult {
 		y = 2*x*y + imag(c)
 		x = x2 - y2 + real(c)
 		if (x2 + y2) >= 4 {
+			completed = i + 1
+			break
+		}
+	}
+	return IterationResult{z, completed}
+}
+
+func SlowIterationFunction(z, c complex128, iterations int) IterationResult {
+	var completed = iterations
+	for i := 0; i < iterations; i++ {
+		z = z*z + c
+		if cmplx.Abs(z) >= 4 {
 			completed = i + 1
 			break
 		}
