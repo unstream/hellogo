@@ -1,38 +1,43 @@
 package main
 
 import (
-	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/unstream/hellogo/mandelbrot"
-	"image/jpeg"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
 	router := gin.Default()
-	router.GET("/mandelbrot", func(c *gin.Context) {
-		iterations := c.DefaultQuery("iterations", "100")
-		log.Print(iterations)
-		writeImage(c)
+	router.GET("/health", func(c *gin.Context) {
+		c.String(http.StatusOK, "Service is up")
 	})
+	router.GET("/mandelbrot", mandelbrotHandler())
 	router.Run()
 }
 
-// writeImage encodes an image 'img' in jpeg format and writes it into the context response.
-func writeImage(c gin.Context) {
-	img := mandelbrot.Image()
+func mandelbrotHandler() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		fractal := mandelbrot.Fractal{C0: complex(-1.5, -1), C1: complex(0.5, 1),
+			Width: 700, Height: 700, MaxIterations: 100}
+		var err error
+		err = c.ShouldBindQuery(&fractal)
+		if err != nil {
+			log.Print(fractal)
+			log.Print(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": "field validation failed"})
+			return
+		}
+		log.Print(fractal.MaxIterations)
 
-	start := time.Now()
-	buffer := new(bytes.Buffer)
-	options := new(jpeg.Options)
-	options.Quality = 100
-	if err := jpeg.Encode(buffer, img, options); err != nil {
-		log.Println("unable to encode image.")
-		c.AbortWithError(http.StatusInternalServerError, err)
-	} else {
-		c.Data(http.StatusOK, "image/jpeg", buffer.Bytes())
-		log.Print("Encoding image took ", time.Since(start))
+		fractalArray := mandelbrot.CreateFractal(mandelbrot.MandelbrotFunction, fractal)
+		img := mandelbrot.Image(fractalArray, fractal.MaxIterations)
+		bytes, err := mandelbrot.CreateJpgImage(img)
+		if err != nil {
+			log.Print(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		c.Data(http.StatusOK, "image/jpeg", bytes)
 	}
 }
