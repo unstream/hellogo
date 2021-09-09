@@ -1,4 +1,4 @@
-package mandelbrot
+package control
 
 import (
 	"bytes"

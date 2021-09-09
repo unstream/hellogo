@@ -1,4 +1,4 @@
-package mandelbrot
+package control
 
 // MandelbrotFunction Iterate the Mandelbrot function f(z) =  z^2 + c over the given number of iterations by returning f(f(...)).
 // Using the result you can start iterating for further iterations.

@@ -1,17 +1,10 @@
-package mandelbrot
+package control
 
 import (
+	"github.com/unstream/hellogo/mandelbrot/entity"
 	"log"
 	"time"
 )
-
-type Fractal struct {
-	C0            complex128 `form:"c0" json:"c0"`
-	C1            complex128 `form:"c1" json:"c1"`
-	Width         int        `form:"w" json:"w"`
-	Height        int        `form:"h" json:"h"`
-	MaxIterations int        `form:"max_iterations" json:"max_iterations" binding:"required"`
-}
 
 type IterationFunction func(z, c complex128, iterations int) IterationResult
 
@@ -27,7 +20,7 @@ type row struct {
 
 // Use the iteration function f to render a fractal in the area [C0, C1] into a pixel area
 
-func CreateFractal(f IterationFunction, fractal Fractal) [][]int {
+func CreateFractal(f IterationFunction, fractal entity.Fractal) [][]int {
 	start := time.Now()
 
 	img := make([][]int, fractal.Height)
@@ -48,7 +41,7 @@ func CreateFractal(f IterationFunction, fractal Fractal) [][]int {
 	return img
 }
 
-func computeRow(f IterationFunction, y int, cy float64, fractalDef Fractal, c chan row) {
+func computeRow(f IterationFunction, y int, cy float64, fractalDef entity.Fractal, c chan row) {
 	r := make([]int, fractalDef.Width)
 	dx := (real(fractalDef.C1) - real(fractalDef.C0)) / float64(fractalDef.Width)
 	for x := range r {
