@@ -26,14 +26,12 @@ func MandelbrotHandler(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpg", bytes)
 }
 
-func createMandelbrotImage(fractalDto dto.Fractal) ([]byte, error) {
+func createMandelbrotImage(dto dto.Fractal) ([]byte, error) {
 
-	c0 := complex(fractalDto.C0, fractalDto.C0i)
-	c1 := complex(fractalDto.C1, fractalDto.C1i)
 	fractal := entity.Fractal{
-		C0: c0, C1: c1,
-		Width: fractalDto.Width, Height: fractalDto.Height,
-		MaxIterations: fractalDto.MaxIterations,
+		C0: complex(dto.C0, dto.C0i), C1: complex(dto.C1, dto.C1i),
+		Width: dto.Width, Height: dto.Height,
+		MaxIterations: dto.MaxIterations,
 	}
 	fractalArray := control.CreateFractal(control.MandelbrotFunction, fractal)
 	img := control.Image(fractalArray, fractal.MaxIterations)
