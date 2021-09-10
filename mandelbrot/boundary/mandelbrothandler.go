@@ -1,7 +1,7 @@
 package boundary
 
 import (
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/unstream/hellogo/mandelbrot/boundary/dto"
 	"github.com/unstream/hellogo/mandelbrot/control"
 	"github.com/unstream/hellogo/mandelbrot/entity"
