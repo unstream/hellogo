@@ -10,6 +10,7 @@ import (
 
 func main() {
 	// Initialization of go-echo server
+
 	name := "Mandelbrot-Server"
 	e := echo.New()
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -24,8 +25,9 @@ func main() {
 	APIRoute := e.Group("/api")
 	// grouping routes for version 1.0 API
 	v1route := APIRoute.Group("/v1")
-	v1route.GET("/mandelbrot", boundary.MandelbrotHandler)
+	v1route.GET("/mandelbrot", boundary.MandelbrotGetHandler)
+	v1route.POST("/mandelbrot", boundary.MandelbrotPostHandler)
 
 	// firing up the server
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":8081"))
 }
