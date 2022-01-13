@@ -1,15 +1,26 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/unstream/hellogo/mandelbrot/boundary"
+	"net/http"
 	"os"
 )
 
+// content holds our static web server content.
+//go:embed web/build
+var content embed.FS
+
+// Initialization of go-echo server
+var contentHandler = echo.WrapHandler(http.FileServer(http.FS(content)))
+
+// The embedded files will all be in the '/static' folder so need to rewrite the request (could also do this with fs.Sub)
+var contentRewrite = middleware.Rewrite(map[string]string{"/*": "/web/build/$1"})
+
 func main() {
-	// Initialization of go-echo server
 
 	name := "Mandelbrot-Server"
 	e := echo.New()
@@ -22,6 +33,8 @@ func main() {
 	}))
 
 	// list of endpoint routes
+	e.GET("/*", contentHandler, contentRewrite)
+
 	APIRoute := e.Group("/api")
 	// grouping routes for version 1.0 API
 	v1route := APIRoute.Group("/v1")

@@ -1,33 +1,26 @@
-FROM golang:alpine
+FROM node:16-alpine3.11 as build-node
+RUN apk --no-cache --virtual build-dependencies add \
+        python \
+        make \
+        g++
 
-# Set necessary environmet variables needed for our image
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+WORKDIR /workdir
+COPY web/ .
+RUN npm install
+RUN npm run build
 
-# Move to working directory /build
-WORKDIR /build
+FROM golang:1.17rc2-alpine3.14 as build-go
 
-# Copy and download dependency using go mod
-COPY go.mod .
-#COPY go.sum .
+ENV GOPATH ""
+RUN go env -w GOPROXY=direct
+RUN apk add git
+
+ADD go.mod go.sum ./
 RUN go mod download
+ADD . .
+COPY --from=build-node /workdir/build ./web/build
+RUN go build -o /main main.go
 
-# Copy the code into the container
-COPY . .
-
-# Build the application
-RUN go build -o main cmd/server/main.go
-
-# Move to /dist directory as the place for resulting binary folder
-WORKDIR /dist
-
-# Copy binary from build to main folder
-RUN cp /build/main .
-
-# Export necessary port
-EXPOSE 8080
-
-# Command to run when starting the container
-CMD ["/dist/main"]
+FROM alpine:3.13
+COPY --from=build-go /main /main
+ENTRYPOINT [ "/main" ]
