@@ -1,8 +1,8 @@
 FROM node:16-alpine3.11 as build-node
-RUN apk --no-cache --virtual build-dependencies add \
-        python \
-        make \
-        g++
+#RUN apk --no-cache --virtual build-dependencies add \
+#        python \
+#        make \
+#        g++
 
 WORKDIR /workdir
 COPY web/ .
