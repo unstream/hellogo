@@ -6,8 +6,8 @@ FROM node:16-alpine3.11 as build-node
 
 WORKDIR /workdir
 COPY web/ .
-RUN npm install
-RUN npm run build
+#RUN npm install
+#RUN npm run build
 
 FROM golang:1.17rc2-alpine3.14 as build-go
 
@@ -16,7 +16,7 @@ RUN go env -w GOPROXY=direct
 RUN apk add git
 
 ADD go.mod go.sum ./
-RUN go mod download
+#RUN go mod download
 ADD . .
 COPY --from=build-node /workdir/build ./web/build
 RUN go build -o /main main.go
