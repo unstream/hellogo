@@ -10,6 +10,7 @@ COPY web/ .
 #RUN npm run build
 
 FROM golang:1.17-alpine as build-go
+RUN unset GOPATH
 
 ADD go.mod go.sum ./
 RUN go mod download
