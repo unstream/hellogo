@@ -1,0 +1,11 @@
+1 EPLF
+2 BGZ
+3 BSP
+#
+1 3 BSP	Belegeingang
+2 3 BSP	Belegeingang
+3 1 BSP	Belegausgang
+3 2 BSP	Belegausgang
+1 3 BSP	Belegstatus-API
+2 3 BSP	Belegstatus-API
+
