@@ -18,7 +18,7 @@ RUN apk add git
 ADD go.mod go.sum ./
 #RUN go mod download
 ADD . .
-COPY --from=build-node /workdir/build ./web/build
+#COPY --from=build-node /workdir/build ./web/build
 RUN go build -o /main main.go
 
 FROM alpine:3.13
