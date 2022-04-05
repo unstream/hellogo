@@ -88,7 +88,7 @@
         computeImageUrl(): string {
             //C02F94VEMD6R
             //http://localhost:8081
-            let url = "http://localhost:8081/api/v1/mandelbrot"
+            let url = "/api/v1/mandelbrot"
                 + "?c0=" + this.state.c0
                 + "&c0i=" + this.state.c0i
                 + "&c1=" + this.state.c1
